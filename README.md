@@ -1,15 +1,15 @@
-# Tracking System with ArduCAM PTZ camera
+# Tracking System with ArduCAM PTZ Camera
 
 ## Overview
 
-This system will detect and track animals using a PTZ (Pan-Tilt-Zoom) camera with AI-powered object detection. When an animal is detected, the system automatically:
+This system detects and tracks animals using a PTZ (Pan-Tilt-Zoom) camera with AI-powered object detection. When an animal is detected, the system automatically:
 
-- 🎯 Tracks the animal by controlling the PTZ camera to keep it centered in frame
-- 🔍 Automatically zooms to maintain optimal object size for maximum visibility of the detected subject
-- 📸 Captures an initial high-quality photo when tracking begins
-- 🎥 Records a 60-second video of the tracked subject
-- ☁️ Automatically uploads recordings to AWS S3 cloud storage
-- 🔄 Returns the camera to its initial position after tracking
+- 🎯 **Tracks the animal** by controlling the PTZ camera to keep it centered in frame
+- 🔍 **Automatically zooms** to maintain optimal object size for maximum visibility of the detected subject
+- 📸 **Captures an initial high-quality photo** when tracking begins
+- 🎥 **Records a 60-second video** of the tracked subject
+- ☁️ **Automatically uploads recordings** to AWS S3 cloud storage
+- 🔄 **Returns the camera** to its initial position after tracking
 
 The system uses computer vision for real-time object detection and PID controllers for smooth camera movements.
 
@@ -28,22 +28,24 @@ The system uses computer vision for real-time object detection and PID controlle
 └─────────────────┘      └──────────────┘      └─────────────┘
 ```
 
-## Requirements
+---
 
 ## Installation
 
-1. Clone the repository:
+### 1. Clone Repository
+
 ```bash
 git clone https://github.com/tharindu326/wildCAM.git
 cd wildCAM
 ```
 
-2. Install Python dependencies:
+### 2. Install Python Dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Setup ArduCam PTZ camera:
+### 3. Setup ArduCam PTZ Camera
 
 #### Install Camera Dependencies
 ```bash
@@ -65,12 +67,12 @@ camera_auto_detect=0
 
 Add the appropriate camera overlay:
 
-For IMX219 camera:
+**For IMX219 camera:**
 ```
 dtoverlay=imx219
 ```
 
-For IMX477 camera:
+**For IMX477 camera:**
 ```
 dtoverlay=imx477
 ```
@@ -85,7 +87,7 @@ sudo chmod +x enable_i2c_vc.sh
 ```
 Press Y to reboot when prompted.
 
-4. Setup Edge TPU:
+### 4. Setup Edge TPU
 
 #### Update System and Install Dependencies
 ```bash
@@ -117,7 +119,7 @@ gdown https://drive.google.com/uc?id=1IFiN1b-OrNLxTIMLW7wkLDXTgdyTzaqq  # Downlo
 yolo detect predict model=model_data/MDV6-yolov10-c_full_integer_quant_edgetpu.tflite source=test1.mp4 imgsz=224 show=True
 ```
 
-5. Configure Auto-start on Boot:
+### 5. Configure Auto-start on Boot
 
 #### Create Startup Script
 Create a startup script for the tracker:
@@ -129,7 +131,7 @@ Add the following content:
 ```bash
 #!/bin/bash
 cd wildCAM
-python3 main.py --recording-duration 60  # add the argumants you want to run the system with
+python3 main.py --recording-duration 60  # add the arguments you want to run the system with
 ```
 
 Make the script executable:
@@ -150,53 +152,73 @@ Add the following line to run the tracker on system boot:
 
 The system will now automatically start the PTZ tracker 30 seconds after boot, with logs saved to `run.log`.
 
-6. configure the configs in config.py accordingly. Configure the S3 bucket access in the config.py
+### 6. Configure Settings
+
+Configure the configs in `config.py` accordingly. Configure the S3 bucket access in the `config.py`.
+
+---
 
 ## Configuration
 
 The system uses a configuration file (`config.py`) with the following parameters:
 
 ### Detector Settings
-- `detector.weight_file`: Path to YOLO model weights (default: "model_data/MDV6-yolov10-e-1280.pt")
-- `detector.classes`: Filter by specific classes (None for all classes)
-- `detector.OBJECTNESS_CONFIDANCE`: Minimum confidence threshold for detections (default: 0.2)
-- `detector.NMS_THRESHOLD`: Non-maximum suppression threshold (default: 0.45)
-- `detector.device`: Processing device - 'cpu' or GPU ID (default: 'cpu')
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `detector.weight_file` | Path to YOLO model weights | `"model_data/MDV6-yolov10-e-1280.pt"` |
+| `detector.classes` | Filter by specific classes | `None` (all classes) |
+| `detector.OBJECTNESS_CONFIDANCE` | Minimum confidence threshold | `0.2` |
+| `detector.NMS_THRESHOLD` | Non-maximum suppression threshold | `0.45` |
+| `detector.device` | Processing device | `'cpu'` |
 
 ### Video Recording Settings
-- `video.output_path`: Directory for saved recordings (default: 'output/')
-- `video.video_writer_fps`: FPS for output video (default: 60)
-- `video.FOURCC`: Video codec 4-byte code (default: 'mp4v')
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `video.output_path` | Directory for saved recordings | `'output/'` |
+| `video.video_writer_fps` | FPS for output video | `60` |
+| `video.FOURCC` | Video codec 4-byte code | `'mp4v'` |
 
 ### General Settings
-- `general.frame_rotate`: Enable 90-degree rotation (default: False)
-- `general.frame_resize`: Resize frame to specific dimensions (default: None)
-- `general.GPSlocation`: GPS coordinates for file naming (default: '60.4575N-24.9588E')
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `general.frame_rotate` | Enable 90-degree rotation | `False` |
+| `general.frame_resize` | Resize frame to specific dimensions | `None` |
+| `general.GPSlocation` | GPS coordinates for file naming | `'60.4575N-24.9588E'` |
 
 ### PTZ Tracking Parameters
-- `ptz_tracking.frame_width`: Camera frame width (default: 1280)
-- `ptz_tracking.frame_height`: Camera frame height (default: 720)
-- `ptz_tracking.focuser_channel`: Camera channel number (default: 1)
-- `ptz_tracking.target_box_ratio`: Target size for tracked object as ratio of frame (default: 0.4)
-- `ptz_tracking.deadzone_ratio`: Center deadzone to prevent jitter (default: 0.08)
-- `ptz_tracking.tracking_timeout`: Seconds before stopping tracking when object lost (default: 3.0)
-- `ptz_tracking.autofocus_interval`: Autofocus frequency in seconds (default: 5.0)
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `ptz_tracking.frame_width` | Camera frame width | `1280` |
+| `ptz_tracking.frame_height` | Camera frame height | `720` |
+| `ptz_tracking.focuser_channel` | Camera channel number | `1` |
+| `ptz_tracking.target_box_ratio` | Target size for tracked object as ratio of frame | `0.4` |
+| `ptz_tracking.deadzone_ratio` | Center deadzone to prevent jitter | `0.08` |
+| `ptz_tracking.tracking_timeout` | Seconds before stopping tracking when object lost | `3.0` |
+| `ptz_tracking.autofocus_interval` | Autofocus frequency in seconds | `5.0` |
 
 ### Movement Sensitivity
-- `ptz_tracking.pan_sensitivity`: Pan movement sensitivity 0.1-1.0 (default: 0.3)
-- `ptz_tracking.tilt_sensitivity`: Tilt movement sensitivity 0.1-1.0 (default: 0.3)
-- `ptz_tracking.zoom_sensitivity`: Zoom movement sensitivity 0.1-1.0 (default: 0.5)
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `ptz_tracking.pan_sensitivity` | Pan movement sensitivity (0.1-1.0) | `0.3` |
+| `ptz_tracking.tilt_sensitivity` | Tilt movement sensitivity (0.1-1.0) | `0.3` |
+| `ptz_tracking.zoom_sensitivity` | Zoom movement sensitivity (0.1-1.0) | `0.5` |
 
 ### PID Controller Tuning
-- `ptz_tracking.pan_kp/ki/kd`: PID values for pan control (default: 0.6/0.05/0.15)
-- `ptz_tracking.tilt_kp/ki/kd`: PID values for tilt control (default: 0.6/0.05/0.15)
-- `ptz_tracking.zoom_kp/ki/kd`: PID values for zoom control (default: 0.4/0.02/0.1)
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `ptz_tracking.pan_kp/ki/kd` | PID values for pan control | `0.6/0.05/0.15` |
+| `ptz_tracking.tilt_kp/ki/kd` | PID values for tilt control | `0.6/0.05/0.15` |
+| `ptz_tracking.zoom_kp/ki/kd` | PID values for zoom control | `0.4/0.02/0.1` |
 
 ### S3 Cloud Storage
-- `s3.bucket_name`: AWS S3 bucket name for uploads
-- `s3.region`: AWS region
-- `s3.access_key_id`: AWS access key
-- `s3.secret_access_key`: AWS secret key
+| Parameter | Description |
+|-----------|-------------|
+| `s3.bucket_name` | AWS S3 bucket name for uploads |
+| `s3.region` | AWS region |
+| `s3.access_key_id` | AWS access key |
+| `s3.secret_access_key` | AWS secret key |
+
+---
 
 ## Usage
 
@@ -213,30 +235,30 @@ python main.py
 python main.py [OPTIONS]
 ```
 
-Available options:
-- `--width`: Frame width (default: from config)
-- `--height`: Frame height (default: from config)
-- `--target-ratio`: Target detection box ratio (default: 0.3)
-- `--deadzone`: Center deadzone ratio (default: 0.1)
-- `--pan-sensitivity`: Pan movement sensitivity 0.1-1.0 (default: from config)
-- `--tilt-sensitivity`: Tilt movement sensitivity 0.1-1.0 (default: from config)
-- `--zoom-sensitivity`: Zoom movement sensitivity 0.1-1.0 (default: from config)
-- `--tracking-timeout`: Seconds before stopping tracking when object lost (default: 5.0)
-- `--recording-duration`: Recording duration in seconds (default: 60)
+**Available Options:**
+- `--width` - Frame width (default: from config)
+- `--height` - Frame height (default: from config)
+- `--target-ratio` - Target detection box ratio (default: 0.3)
+- `--deadzone` - Center deadzone ratio (default: 0.1)
+- `--pan-sensitivity` - Pan movement sensitivity 0.1-1.0 (default: from config)
+- `--tilt-sensitivity` - Tilt movement sensitivity 0.1-1.0 (default: from config)
+- `--zoom-sensitivity` - Zoom movement sensitivity 0.1-1.0 (default: from config)
+- `--tracking-timeout` - Seconds before stopping tracking when object lost (default: 5.0)
+- `--recording-duration` - Recording duration in seconds (default: 60)
 
 ### Example Commands
 
-Track with custom frame size:
+**Track with custom frame size:**
 ```bash
 python main.py --width 1280 --height 720
 ```
 
-Adjust tracking sensitivity:
+**Adjust tracking sensitivity:**
 ```bash
 python main.py --pan-sensitivity 0.8 --tilt-sensitivity 0.6
 ```
 
-Set longer recording duration:
+**Set longer recording duration:**
 ```bash
 python main.py --recording-duration 120
 ```
@@ -244,22 +266,25 @@ python main.py --recording-duration 120
 ### Interactive Controls
 
 While the program is running:
-- `q`: Quit the program
-- `f`: Trigger manual autofocus
-- `r`: Reset camera to initial position
+- **`q`** - Quit the program
+- **`f`** - Trigger manual autofocus
+- **`r`** - Reset camera to initial position
+
+---
 
 ## Output Structure
 
+### Local Storage
 The system creates a structured output:
 ```
 output_path/
-├── 20240104_143022/              # Session folder (timestamp)
-│   ├── initial_20240104_143022.jpg    # Initial photo
-│   └── 143022-143122-GPS_LOCATION.mp4 # Recording (start-end-location)
+├── 20240104_143022/                    # Session folder (timestamp)
+│   ├── initial_20240104_143022.jpg     # Initial photo
+│   └── 143022-143122-GPS_LOCATION.mp4  # Recording (start-end-location)
 ```
 
+### Cloud Storage
 Files are automatically uploaded to S3 with the structure:
 ```
-s3://name-bucket/recordings/20240104_143022/143022-143122-GPS_LOCATION.mp4
+s3://bucket-name/recordings/20240104_143022/143022-143122-GPS_LOCATION.mp4
 ```
-
