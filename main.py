@@ -104,9 +104,8 @@ class PTZCameraTracker:
         
         # Initialize PTZ camera
         print("Initializing PTZ camera...")
-        self.ptz_camera = ArduCamPTZ(cfg.ptz_tracking.focuser_channel)
+        self.ptz_camera = ArduCamPTZ(cfg.ptz_tracking.focuser_channel, manual_control=cfg.ptz_tracking.manual_control)
         self.ptz_camera.start_preview(self.frame_width, self.frame_height)
-        self.ptz_camera.set_mode(True)  # Set to Adjust mode for autofocus
         
         # Initialize inference engine
         print("Initializing inference engine...")

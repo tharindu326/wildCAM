@@ -116,7 +116,7 @@ rm libedgetpu1-std_16.0tf2.17.1-1.bookworm_arm64.deb
 ```bash
 pip3 install gdown
 gdown https://drive.google.com/uc?id=1IFiN1b-OrNLxTIMLW7wkLDXTgdyTzaqq  # Download test video
-yolo detect predict model=model_data/MDV6-yolov10-c_full_integer_quant_edgetpu.tflite source=test1.mp4 imgsz=224 show=True
+yolo detect predict model=model_data/MDV6-yolov10-c_full_integer_quant_edgetpu.tflite source=test1.mp4 imgsz=640 show=True
 ```
 
 ### 5. Configure Auto-start on Boot

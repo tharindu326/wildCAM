@@ -25,15 +25,12 @@
 import sys
 import time
 import math
-try:
-    import cv2 #sudo apt-get install python-opencv
-    import numpy as np
-    # import picamera
-    # from picamera.array import PiRGBArray
-    from RpiCamera import *
-    from Focuser import Focuser 
-except:
-    sys.exit(0)
+
+import cv2
+import numpy as np
+from PTZCameraController.RpiCamera import *
+from PTZCameraController.Focuser import Focuser 
+
 
 class AutoFocus:
     MAX_FOCUS_VALUE = 18000

@@ -61,6 +61,7 @@ __C.ptz_tracking = edict()
 __C.ptz_tracking.frame_width = 1280
 __C.ptz_tracking.frame_height = 720
 __C.ptz_tracking.focuser_channel = 1
+__C.ptz_tracking.manual_control = True
 
 # Tracking behavior
 __C.ptz_tracking.target_box_ratio = 0.4        # Target detection box size as ratio of frame

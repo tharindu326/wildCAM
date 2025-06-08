@@ -1,0 +1,4 @@
+ultralytics
+easydict==1.9
+picamera2
+rpi-lgpio
